@@ -3,10 +3,12 @@ const express = require('express');
 const morgan = require('morgan');
 const compression = require('compression');
 const passport = require('passport');
-const fileUpload = require('express-fileupload');
+// const fileUpload = require('express-fileupload');
+const multer = require('multer');
 const vision = require('@google-cloud/vision');
 const PORT = process.env.PORT || 8080;
 const app = express();
+const formData = require('express-form-data')
 
 // default options
 module.exports = app;
@@ -62,9 +64,34 @@ const createApp = () => {
   app.use(morgan('dev'));
 
   // body parsing middleware
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+  // app.use(express.json());
+  // app.use(express.urlencoded({ extended: true }));
+  app.use(formData.parse())
 
+  const storage = multer.diskStorage({
+    destination: './',
+    filename: function(req, file, cb) {
+      cb(null, 'IMAGE-' + Date.now() + path.join(__dirname, '..', 'public'));
+    }
+  });
+  
+  const upload = multer({
+    storage: storage,
+    limits: { fileSize: 1000000 }
+  });
+
+  app.post('/upload', upload.single('name'), (req, res, next) => {
+    quickstart(req.files.name.path);
+    // let imageFile = req.files.file;
+  
+    // imageFile.mv(`${__dirname}/public/${req.body.filename}.jpg`, function(err) {
+    //   if (err) {
+    //     return res.status(500).send(err);
+    //   }
+  
+      // res.json({ file: `public/${req.body.filename}.jpg` });
+    // });
+  });
   // compression middleware
   app.use(compression());
 
@@ -79,7 +106,7 @@ const createApp = () => {
   // );
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use(fileUpload());
+  // app.use(fileUpload());
 
   // auth and api routes
   // app.use('/auth', require('./auth'));
@@ -110,20 +137,8 @@ const createApp = () => {
     console.error(err.stack);
     res.status(err.status || 500).send(err.message || 'Internal server error.');
   });
+}
 
-  app.post('/upload', (req, res, next) => {
-    console.log(req);
-    let imageFile = req.files.file;
-
-    imageFile.mv(`${__dirname}/public/${req.body.filename}.jpg`, function(err) {
-      if (err) {
-        return res.status(500).send(err);
-      }
-
-      res.json({ file: `public/${req.body.filename}.jpg` });
-    });
-  });
-};
 
 const startListening = () => {
   // start listening (and create a 'server' object representing our server)

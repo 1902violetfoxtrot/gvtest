@@ -136,61 +136,63 @@ var App =
 function (_Component) {
   _inherits(App, _Component);
 
-  function App(props) {
+  function App() {
+    var _getPrototypeOf2;
+
     var _this;
 
     _classCallCheck(this, App);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(App).call(this, props));
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
 
-    _defineProperty(_assertThisInitialized(_this), "handleDrop", function (acceptedFiles) {
-      console.log(acceptedFiles);
-      acceptedFiles.map(
+    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(App)).call.apply(_getPrototypeOf2, [this].concat(args)));
+
+    _defineProperty(_assertThisInitialized(_this), "handleOnDrop",
+    /*#__PURE__*/
+    function () {
+      var _ref = _asyncToGenerator(
       /*#__PURE__*/
-      function () {
-        var _ref = _asyncToGenerator(
-        /*#__PURE__*/
-        regeneratorRuntime.mark(function _callee(file) {
-          var formData, res, data;
-          return regeneratorRuntime.wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  // Initial FormData
-                  formData = new FormData();
-                  formData.append('myImage', file);
-                  console.log(formData); // Make an AJAX upload request using Axios (replace Cloudinary URL below with your own)
+      regeneratorRuntime.mark(function _callee(files) {
+        var file, _ref2, data;
 
-                  _context.prev = 3;
-                  _context.next = 6;
-                  return axios__WEBPACK_IMPORTED_MODULE_3___default.a.post('/upload', formData);
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                console.log('files log', files);
+                file = new FormData();
+                file.append('name', files[0]);
+                console.log(file);
+                _context.prev = 4;
+                _context.next = 7;
+                return axios__WEBPACK_IMPORTED_MODULE_3___default.a.post('/upload', file);
 
-                case 6:
-                  res = _context.sent;
-                  data = res.data; // const fileURL = data.secure_url; // You should store this URL for future references in your app
+              case 7:
+                _ref2 = _context.sent;
+                data = _ref2.data;
+                console.log(data);
+                _context.next = 15;
+                break;
 
-                  console.log(data);
-                  _context.next = 14;
-                  break;
+              case 12:
+                _context.prev = 12;
+                _context.t0 = _context["catch"](4);
+                console.error(_context.t0);
 
-                case 11:
-                  _context.prev = 11;
-                  _context.t0 = _context["catch"](3);
-                  console.error(_context.t0);
-
-                case 14:
-                case "end":
-                  return _context.stop();
-              }
+              case 15:
+              case "end":
+                return _context.stop();
             }
-          }, _callee, null, [[3, 11]]);
-        }));
+          }
+        }, _callee, null, [[4, 12]]);
+      }));
 
-        return function (_x) {
-          return _ref.apply(this, arguments);
-        };
-      }());
-    });
+      return function (_x) {
+        return _ref.apply(this, arguments);
+      };
+    }());
 
     return _this;
   }
@@ -199,10 +201,10 @@ function (_Component) {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_dropzone__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        onDrop: this.handleDrop
-      }, function (_ref2) {
-        var getRootProps = _ref2.getRootProps,
-            getInputProps = _ref2.getInputProps;
+        onDrop: this.handleOnDrop
+      }, function (_ref3) {
+        var getRootProps = _ref3.getRootProps,
+            getInputProps = _ref3.getInputProps;
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("section", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", getRootProps(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", getInputProps()), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Drag 'n' drop some files here, or click to select files")));
       });
     }
@@ -211,7 +213,7 @@ function (_Component) {
   return App;
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
 
-react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(App, null), document.getElementById('app'));
+react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(App, null), document.getElementById("app"));
 
 /***/ }),
 
