@@ -3,30 +3,12 @@ const express = require('express');
 const morgan = require('morgan');
 const compression = require('compression');
 const passport = require('passport');
-// const fileUpload = require('express-fileupload');
-const multer = require('multer');
-const vision = require('@google-cloud/vision');
 const PORT = process.env.PORT || 8080;
 const app = express();
-const formData = require('express-form-data')
+
 
 // default options
 module.exports = app;
-
-async function quickstart(aFile) {
-  // Imports the Google Cloud client library
-
-  // Creates a client
-  const client = new vision.ImageAnnotatorClient({
-    keyFilename: './API.json'
-  });
-
-  // Performs label detection on the image file
-  const [result] = await client.labelDetection(aFile);
-  const labels = result.labelAnnotations;
-  console.log('Labels:');
-  labels.forEach(label => console.log(label.description));
-}
 
 // This is a global Mocha hook, used for resource cleanup.
 // Otherwise, Mocha v4+ never quits after tests.
@@ -64,34 +46,9 @@ const createApp = () => {
   app.use(morgan('dev'));
 
   // body parsing middleware
-  // app.use(express.json());
-  // app.use(express.urlencoded({ extended: true }));
-  app.use(formData.parse())
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 
-  const storage = multer.diskStorage({
-    destination: './',
-    filename: function(req, file, cb) {
-      cb(null, 'IMAGE-' + Date.now() + path.join(__dirname, '..', 'public'));
-    }
-  });
-  
-  const upload = multer({
-    storage: storage,
-    limits: { fileSize: 1000000 }
-  });
-
-  app.post('/upload', upload.single('name'), (req, res, next) => {
-    quickstart(req.files.name.path);
-    // let imageFile = req.files.file;
-  
-    // imageFile.mv(`${__dirname}/public/${req.body.filename}.jpg`, function(err) {
-    //   if (err) {
-    //     return res.status(500).send(err);
-    //   }
-  
-      // res.json({ file: `public/${req.body.filename}.jpg` });
-    // });
-  });
   // compression middleware
   app.use(compression());
 
@@ -110,7 +67,7 @@ const createApp = () => {
 
   // auth and api routes
   // app.use('/auth', require('./auth'));
-  // app.use('/api', require('./api'));
+  app.use('/api', require('./api'));
 
   // static file-serving middleware
   app.use(express.static(path.join(__dirname, '..', 'public')));
@@ -137,8 +94,7 @@ const createApp = () => {
     console.error(err.stack);
     res.status(err.status || 500).send(err.message || 'Internal server error.');
   });
-}
-
+};
 
 const startListening = () => {
   // start listening (and create a 'server' object representing our server)

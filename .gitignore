@@ -1,2 +1,6 @@
 API.json
 node_modules
+uploads
+public/.DS_Store
+public/bundle.js
+public/bundle.js.map

@@ -1,20 +1,22 @@
-import React, { Component } from "react";
-import ReactDOM from "react-dom";
-import Dropzone from "react-dropzone";
-import axios from "axios";
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import Dropzone from 'react-dropzone';
+import axios from 'axios';
 
 class App extends Component {
-  handleOnDrop = async files => {
+  handleOnDrop = files => {
     console.log('files log', files);
-    let file = new FormData();
-    file.append('name', files[0])
-    console.log(file)
-    try {
-          const { data } = await axios.post('/upload', file);
-          console.log(data);
-        } catch (error) {
-          console.error(error);
-        }
+    files.forEach(async file => {
+      let fileToSend = new FormData();
+      fileToSend.append('file', file);
+
+      try {
+        const { data } = await axios.post('api/uploads/', fileToSend);
+        console.log(data);
+      } catch (error) {
+        console.error(error);
+      }
+    });
   };
 
   render() {
@@ -33,4 +35,4 @@ class App extends Component {
   }
 }
 
-ReactDOM.render(<App />, document.getElementById("app"));
+ReactDOM.render(<App />, document.getElementById('app'));
