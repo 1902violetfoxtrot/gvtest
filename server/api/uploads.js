@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage: storage }).single('file');
+const upload = multer({ storage: storage }).array('files');
 
 router.post('/', (req, res) => {
   upload(req, res, err => {
@@ -40,7 +40,9 @@ router.post('/', (req, res) => {
       console.error('Failed to upload file');
     } else {
       res.sendStatus(200);
-      quickstart(req.file.path);
+      req.files.forEach(file => {
+        quickstart(file.path);
+      });
     }
   });
 });
