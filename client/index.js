@@ -28,7 +28,7 @@ class App extends Component {
   };
   handleOnDropRejected = () => {
     window.alert(
-      'One or more of your files is greater than 6MB and cannot be uploaded'
+      'One or more of your files is greater than 10MB or not an image file(.jpg/.jpeg, png, gif, or tiff) and cannot be uploaded'
     );
   };
 
@@ -36,7 +36,7 @@ class App extends Component {
     this.state.files.forEach(file => URL.revokeObjectURL(file.preview));
   }
   render() {
-    const MAX_SIZE = 6000000;
+    const MAX_SIZE = 10000000;
     const ACCEPTED_FILE_TYPES =
       'image/jpeg, image/jpg image/png, image/tiff,image/gif';
     const { files } = this.state;
