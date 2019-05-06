@@ -104,6 +104,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_3__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
@@ -136,76 +138,111 @@ var App =
 function (_Component) {
   _inherits(App, _Component);
 
-  function App() {
-    var _getPrototypeOf2;
-
+  function App(props) {
     var _this;
 
     _classCallCheck(this, App);
 
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(App).call(this, props));
 
-    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(App)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _defineProperty(_assertThisInitialized(_this), "handleOnDrop", function (files) {
+      _this.setState({
+        files: files.map(function (file) {
+          return Object.assign(file, {
+            preview: URL.createObjectURL(file)
+          });
+        })
+      });
 
-    _defineProperty(_assertThisInitialized(_this), "handleOnDrop",
-    /*#__PURE__*/
-    function () {
-      var _ref = _asyncToGenerator(
+      files.map(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee(files) {
-        var file, _ref2, data;
+      function () {
+        var _ref = _asyncToGenerator(
+        /*#__PURE__*/
+        regeneratorRuntime.mark(function _callee(file) {
+          var filesToSend, _ref2, data;
 
-        return regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                console.log('files log', files);
-                file = new FormData();
-                file.append('name', files[0]);
-                console.log(file);
-                _context.prev = 4;
-                _context.next = 7;
-                return axios__WEBPACK_IMPORTED_MODULE_3___default.a.post('/upload', file);
+          return regeneratorRuntime.wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  filesToSend = new FormData();
+                  filesToSend.append('files', file);
+                  _context.prev = 2;
+                  _context.next = 5;
+                  return axios__WEBPACK_IMPORTED_MODULE_3___default.a.post('api/uploads/', filesToSend);
 
-              case 7:
-                _ref2 = _context.sent;
-                data = _ref2.data;
-                console.log(data);
-                _context.next = 15;
-                break;
+                case 5:
+                  _ref2 = _context.sent;
+                  data = _ref2.data;
+                  _context.next = 12;
+                  break;
 
-              case 12:
-                _context.prev = 12;
-                _context.t0 = _context["catch"](4);
-                console.error(_context.t0);
+                case 9:
+                  _context.prev = 9;
+                  _context.t0 = _context["catch"](2);
+                  console.error(_context.t0);
 
-              case 15:
-              case "end":
-                return _context.stop();
+                case 12:
+                case "end":
+                  return _context.stop();
+              }
             }
-          }
-        }, _callee, null, [[4, 12]]);
-      }));
+          }, _callee, null, [[2, 9]]);
+        }));
 
-      return function (_x) {
-        return _ref.apply(this, arguments);
-      };
-    }());
+        return function (_x) {
+          return _ref.apply(this, arguments);
+        };
+      }());
+    });
 
+    _defineProperty(_assertThisInitialized(_this), "handleOnDropRejected", function () {
+      window.alert('One or more of your files is greater than 10MB or not an image file(.jpg/.jpeg, png, gif, or tiff) and cannot be uploaded');
+    });
+
+    _this.state = {
+      files: []
+    };
     return _this;
   }
 
   _createClass(App, [{
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      this.state.files.forEach(function (file) {
+        return URL.revokeObjectURL(file.preview);
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
+      var MAX_SIZE = 10000000;
+      var ACCEPTED_FILE_TYPES = 'image/jpeg, image/jpg image/png, image/tiff,image/gif';
+      var files = this.state.files;
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_dropzone__WEBPACK_IMPORTED_MODULE_2__["default"], {
-        onDrop: this.handleOnDrop
+        onDrop: this.handleOnDrop,
+        accept: ACCEPTED_FILE_TYPES,
+        maxSize: MAX_SIZE,
+        multiple: true,
+        onDropRejected: this.handleOnDropRejected
       }, function (_ref3) {
         var getRootProps = _ref3.getRootProps,
             getInputProps = _ref3.getInputProps;
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("section", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", getRootProps(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", getInputProps()), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Drag 'n' drop some files here, or click to select files")));
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("section", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", _extends({
+          className: "filesClass"
+        }, getRootProps()), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", getInputProps()), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("p", null, "Drag 'n' drop some files here, or click to select files"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "filesListClass"
+        }, files.map(function (file) {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
+            className: "filePreviews",
+            key: file.name
+          }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+            src: file.preview,
+            width: "200",
+            height: "200"
+          }));
+        }))));
       });
     }
   }]);
@@ -213,7 +250,7 @@ function (_Component) {
   return App;
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
 
-react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(App, null), document.getElementById("app"));
+react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.render(react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(App, null), document.getElementById('app'));
 
 /***/ }),
 
